@@ -1,0 +1,13 @@
+{
+  "name": "print-website",
+  "version": "1.0.0",
+  "description": "A website for printable things.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "open": "start firefox ./index.html"
+  },
+  "keywords": [],
+  "author": "DutyS12345",
+  "license": "ISC"
+}

@@ -1,0 +1,38 @@
+@media print {
+    body * {
+        display: none;
+    }
+
+    body .print,
+    body .print * {
+        display: initial;
+    }
+}
+
+@media screen {
+    #controls {
+        border: 1px solid gray;
+        box-sizing: border-box;
+    }
+
+    .tabber__nav__button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .tabber__tab:not(.selected) {
+        display: none;
+    }
+
+    .tabber__nav__button.selected {
+        background-color: aquamarine;
+    }
+}
+
+.checkbox {
+    width: 3px;
+    height: 3px;
+    border: 2px solid black;
+}
