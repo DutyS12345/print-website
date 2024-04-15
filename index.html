@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Pages</title>
     <link rel="stylesheet" href="styles/index.css">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self';" />
   </head>
   <body>
     <p>
@@ -24,26 +27,31 @@
       </div>
       <div class="tabber__content">
         <div class="tabber__tab selected" data-tab-name="grid">
-          <input type="radio" name="checklist-type" value="grid" id="grid">
-          <label for="grid">Fixed Row Spacing</label>
-          <input type="radio" name="checklist-type" value="dual-flex" id="dual-flex">
-          <label for="dual-flex">Max Spacing</label>
-
-          <label for="hspacing">Horizontal Spacing</label>
-          <input type="range" min="1" max="50" value="5" id="hspacing" class="slider" title="Horizontal spacing">
-          <input type="text" id="hspacing-text" title="Horizontal spacing">
-          <label for="vspacing">Vertical Spacing</label>
-          <input type="range" min="1" max="50" value="5" id="vspacing" class="slider" title="Vertical spacing">
-          <input type="text" id="vspacing-text" title="Vertical spacing">
-
           <label for="col-count"># Columns</label>
           <input type="range" min="1" max="100" value="5" id="col-count" class="slider" title="Number of columns">
           <input type="text" id="col-count-text" title="Number of columns">
           <label for="row-count"># Rows</label>
           <input type="range" min="1" max="1000" value="5" id="row-count" class="slider" title="Number of rows">
           <input type="text" id="row-count-text" title="Number of rows">
+
+          <input type="radio" name="checklist-type" value="grid" id="grid" checked="true">
+          <label for="grid">Fixed Row Spacing</label>
+          <input type="radio" name="checklist-type" value="dual-flex" id="dual-flex">
+          <label for="dual-flex">Max Spacing</label>
+
+          <div id="hspacing-group" class="control-group">
+            <label for="hspacing">Horizontal Spacing</label>
+            <input type="text" id="hspacing-text" title="Horizontal spacing"><br>
+            <input type="range" min="1" max="50" value="5" id="hspacing" class="slider" title="Horizontal spacing">
+          </div>
+          <div id="vspacing-group" class="control-group">
+            <label for="vspacing">Vertical Spacing</label>
+            <input type="text" id="vspacing-text" title="Vertical spacing">
+            <br>
+            <input type="range" min="1" max="50" value="5" id="vspacing" class="slider" title="Vertical spacing">
+          </div>
         </div>
-        <div class="tabber__tab" data-tab-name="tab2">
+        <div class="tabber__tab" data-tab-name="tree">
           <p>This is other text.</p>
           <div>Ok</div>
         </div>

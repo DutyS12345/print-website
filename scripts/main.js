@@ -87,6 +87,7 @@ function regeneratePrintContent() {
             checklistRows.style.gridTemplate = `auto ${controlState["row-count"] > 1 ? `repeat(${controlState["row-count"] - 1}, auto) ` : ''}/ auto ${controlState["col-count"] > 1 ? `repeat(${controlState["col-count"] - 1}, 1fr auto)` : ''}`;
             checklistRows.style.justifyContent = "space-between";
             checklistRows.style.justifyItems = "start";
+            checklistRows.style.rowGap = `${controlState["vspacing"]}px`;
             totalCheckBoxCount = controlState["row-count"] * controlState["col-count"];
             for (let checkN = 0; checkN < totalCheckBoxCount; checkN++) {
                 let checkBox = document.createElement("div");
@@ -107,13 +108,15 @@ function regeneratePrintContent() {
 
 var controlState = {}
 
-const controlIds = ["col-count", "row-count"]
+const controlIds = ["col-count", "row-count", "hspacing", "vspacing"]
 function loadControlsState() {
+    controlState = {}
     let controls = document.getElementById("controls");
     for (controlId of controlIds) {
         loadControlValue(controls, controlId);
     }
-    controlState["checklist-type"] = "grid";
+    controlState["checklist-type"] = controls.querySelector('input[name=checklist-type]:checked').value;
+    console.log(controlState)
 }
 
 function loadControlValue(controlsElement, controlId) {
@@ -121,3 +124,16 @@ function loadControlValue(controlsElement, controlId) {
 }
 
 regeneratePrintContent()
+
+function updateControlLayout() {
+    let controls = document.getElementById("controls");
+    controls.querySelectorAll(".control-group").display = true;
+    switch (controlState["checklist-type"]) {
+        case "grid":
+            {
+                controls.querySelector("#hspacing-group").display = false;
+                break;
+            }
+    }
+}
+updateControlLayout()
