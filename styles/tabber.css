@@ -1,0 +1,20 @@
+.tabber__nav {
+    display: inline-block;
+}
+
+.tabber__nav__button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid gray;
+}
+
+.tabber__tab:not(.tab--active) {
+    display: none;
+}
+
+.tabber__nav__button.tab--active {
+    background-color: aquamarine;
+}

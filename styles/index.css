@@ -1,39 +1,122 @@
-@media print {
+body {
+    display: flex;
+    flex-flow: column nowrap;
+    margin: 0;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
 
-    body>*:not(.print),
-    body>*:not(.print) * {
+#print-content {
+    flex: 1 0 auto;
+}
+
+td.checkbox {
+    padding: 0;
+}
+
+@media print {
+    body>*:not(.print) {
         display: none;
     }
 }
 
+
 @media screen {
-    .tabber__nav__button {
-        background-color: transparent;
+    body {
+        padding: 8px;
+    }
+
+    .nav-toggle {
+        display: block;
+        position: fixed;
+        z-index: 100;
+        padding: 6px;
+        background: lightgray;
         border: none;
+        opacity: 0.6;
+        border-radius: 4px;
+        width: 2em;
+        height: 2em;
+        padding: 6px;
+        font-size: 14pt;
         cursor: pointer;
-        padding: 0;
+
     }
 
-    .tabber__tab:not(.selected) {
-        display: none;
+    #control-toggle {
+        right: 20px;
+        top: 20px;
     }
 
-    .tabber__nav__button.selected {
-        background-color: aquamarine;
+    #info-toggle {
+        right: 20px;
+        /* top: calc(28px + 2em); */
+        bottom: 20px;
+    }
+
+    .nav-toggle:hover {
+        opacity: 1;
+        background-color: gray;
+    }
+
+    .nav-toggle.nav-toggle--active,
+    .nav-toggle:active {
+        opacity: 1;
+        background: aquamarine;
     }
 
     #controls {
+        position: fixed;
+        z-index: 1;
+        top: 8px;
+        right: 8px;
+        width: 25vw;
+        background: #ffffffcc;
         border: 1px solid gray;
         box-sizing: border-box;
-    }
-
-    #controls>.tabber__content>.tabber__tab.selected {
         display: flex;
         flex-flow: column nowrap;
+        padding: 4px;
+        height: calc(75vh - 24px);
+        overflow-y: auto;
+    }
+
+    #info {
+        position: fixed;
+        right: 8px;
+        bottom: 8px;
+        width: 25vw;
+        background: #ffffffcc;
+        border: 1px solid gray;
+        box-sizing: border-box;
+        padding: 4px;
+        height: 25vh;
+        overflow-y: auto;
+    }
+
+    #controls:not(.controls--active) {
+        display: none;
+    }
+
+    #info:not(.info--active) {
+        display: none;
     }
 
     .slider {
         margin: 2px;
         width: calc(100% - 4px);
+    }
+
+    .slider-group input[type="text"] {
+        float: right;
+        text-align: right;
+        max-width: 5em;
+    }
+
+    .json-input {
+        width: 100%;
+        box-sizing: border-box;
+        height: 10em;
+        resize: vertical;
     }
 }
