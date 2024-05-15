@@ -131,7 +131,7 @@ function loadControlsState() {
     } catch (e) {
         console.log(e);
     }
-    console.log(controlState)
+    // console.log(controlState)
 }
 
 function loadSliderControlValue(controlsElement, controlId) {
@@ -461,7 +461,7 @@ function resetPrintContentStyles() {
 function updatePrintContentStyles() {
     var newRules = Object.values(printContentStyleSheetRules).filter((rule) => rule !== undefined).join(' ')
     newRules = newRules.replaceAll(/\n\s*/g, "");
-    console.log(newRules);
+    // console.log(newRules);
     printContentStyleSheet.replaceSync(newRules);
 }
 

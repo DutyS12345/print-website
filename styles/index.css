@@ -70,7 +70,7 @@ td.checkbox {
         z-index: 1;
         top: 8px;
         right: 8px;
-        width: 25vw;
+        width: min(max(25vw, 20em), calc(100% - 16px));
         background: #ffffffcc;
         border: 1px solid gray;
         box-sizing: border-box;
@@ -85,7 +85,7 @@ td.checkbox {
         position: fixed;
         right: 8px;
         bottom: 8px;
-        width: 25vw;
+        width: min(max(25vw, 20em), calc(100% - 16px));
         background: #ffffffcc;
         border: 1px solid gray;
         box-sizing: border-box;
