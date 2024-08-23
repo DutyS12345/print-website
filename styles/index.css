@@ -116,7 +116,8 @@ td.checkbox {
     .json-input {
         width: 100%;
         box-sizing: border-box;
-        height: 10em;
-        resize: vertical;
+        resize: none;
+        field-sizing: content;
+        min-height: 5lh;
     }
 }
