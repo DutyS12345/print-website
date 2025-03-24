@@ -19,15 +19,14 @@
         class="fa-solid fa-sliders"></i></button>
     <div id="info" class="info--active tabber">
       <div class="tabber__nav">
-        TODO:
+        <span class="tabber__nav__label">TODO:</span>
         <button class="tabber__nav__button tab--active" data-tab-name="grid">Grid</button>
         <button class="tabber__nav__button" data-tab-name="tree">Tree</button>
       </div>
       <div class="tabber__content">
         <div class="tabber__tab tab--active" data-tab-name="grid">
           <p>
-            checkbox line style, checkbox fill y/n, checkbox fill color style.
-            <br>
+            checkbox line style, checkbox fill y/n, checkbox fill color style.            
           </p>
           <p>
             Possible icons:
@@ -49,16 +48,14 @@
             A page where you can print a check list of checkboxes in a tree.<br>
             <br>
             A way to enter a json with a nested list of lists. The top level can optionally be a list of titled lists
-            which
-            will become headered sections.
+            which will become headered sections.
           </p>
         </div>
       </div>
     </div>
-
     <div id="controls" class="controls--active">
       <div id="checklist-type-group">
-        Checklist Type
+        <div class="checklist-type-label">Checklist Type</div>
         <div>
           <input type="radio" name="checklist-type" value="grid" id="checklist-type-grid" checked="true">
           <label for="checklist-type-grid">Grid</label>
@@ -110,11 +107,11 @@
           <label for="direction-td">Top to Bottom</label>
         </div>
       </div>
-      <div id="grid-labels-json-group">
+      <div class="grid-input labels-json-group">
         <label for="grid-labels-json">Grid Checklist Labels</label>
         <textarea type="text" id="grid-labels-json" class="json-input"></textarea>
       </div>
-      <div id="tree-labels-json-group">
+      <div class="tree-input labels-json-group">
         <label for="tree-labels-json">Tree Checklist Labels</label>
         <textarea type="text" id="tree-labels-json" class="json-input"></textarea>
       </div>

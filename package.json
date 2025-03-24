@@ -9,5 +9,8 @@
   },
   "keywords": [],
   "author": "DutyS12345",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^5.8.2"
+  }
 }

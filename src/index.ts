@@ -1,4 +1,3 @@
-"use strict";
 // control panel toggle
 const controlToggle = document.getElementById("control-toggle");
 const controlPanel = document.getElementById("controls");
@@ -13,13 +12,13 @@ if (controlToggle !== null && controlPanel !== null) {
         if (controlToggle.classList.contains("nav-toggle--active")) {
             controlToggle.classList.remove("nav-toggle--active");
             controlPanel.classList.remove("controls--active");
-        }
-        else {
+        } else {
             controlToggle.classList.add("nav-toggle--active");
             controlPanel.classList.add("controls--active");
         }
-    };
+    }
 }
+
 // info panel toggle
 const infoToggle = document.getElementById("info-toggle");
 const infoPanel = document.getElementById("info");
@@ -34,95 +33,121 @@ if (infoToggle !== null && infoPanel !== null) {
         if (infoToggle.classList.contains("nav-toggle--active")) {
             infoToggle.classList.remove("nav-toggle--active");
             infoPanel.classList.remove("info--active");
-        }
-        else {
+        } else {
             infoToggle.classList.add("nav-toggle--active");
             infoPanel.classList.add("info--active");
         }
-    };
+    }
 }
-const numericSliderControlIds = ["col-count", "row-count"];
-const maxNumericSliderControlIds = ["hspacing", "vspacing", "checkbox-width", "checkbox-height"];
-const radioControlIds = ["direction", "checklist-type"];
+
+type NumericSliderControlId = "col-count" | "row-count";
+type MaxNumericSliderControlId = "hspacing" | "vspacing" | "checkbox-width" | "checkbox-height";
+type SliderControlId = NumericSliderControlId | MaxNumericSliderControlId;
+const numericSliderControlIds: NumericSliderControlId[] = ["col-count", "row-count"];
+const maxNumericSliderControlIds: MaxNumericSliderControlId[] = ["hspacing", "vspacing", "checkbox-width", "checkbox-height"];
+type RadioControlId = "direction" | "checklist-type";
+const radioControlIds: RadioControlId[] = ["direction", "checklist-type"];
+type SliderControlValue = number | 'max';
+type ControlState = {
+    [key in MaxNumericSliderControlId]: SliderControlValue;
+} & {
+    [key in NumericSliderControlId]: number;
+} & {
+    [key in RadioControlId]: string;
+} & {
+    'grid-json-labels'?: string[];
+    'tree-json-labels'?: LabelTree;
+}
+
 // control panel init
-for (let sliderElement of document.querySelectorAll(".slider")) {
+for (let sliderElement of document.querySelectorAll<HTMLInputElement>(".slider")) {
     let sliderGroup = sliderElement.closest('.slider-group');
     if (sliderGroup !== null) {
-        let slider = sliderElement;
-        let sliderTextElement = sliderGroup.querySelector(`#${slider.id}-text`);
+        let slider = sliderElement as HTMLInputElement;
+        let sliderTextElement = sliderGroup.querySelector<HTMLInputElement>(`#${slider.id}-text`);
         if (sliderTextElement === null) {
             console.error(`sliderText for ${slider.id} not found`);
         }
         else {
             let sliderText = sliderTextElement;
             sliderText.value = slider.value;
-            if (maxNumericSliderControlIds.includes(slider.id)) {
+
+            if ((maxNumericSliderControlIds as string[]).includes(slider.id)) {
                 if (slider.value === slider.getAttribute("max")) {
                     sliderText.value = "MAX";
-                }
-                else {
+                } else {
                     sliderText.value = slider.value;
                 }
                 slider.oninput = () => {
                     if (slider.value == slider.getAttribute("max")) {
                         sliderText.value = "MAX";
-                    }
-                    else {
+                    } else {
                         sliderText.value = slider.value;
                     }
                     loadControlsState();
                     updateControlLayout();
                     regeneratePrintContent();
-                };
+                }
                 sliderText.oninput = () => {
                     if (isNaN(Number(sliderText.value))) {
                         slider.value = slider.getAttribute("max") || slider.value;
-                    }
-                    else {
+                    } else {
                         slider.value = sliderText.value;
                     }
                     loadControlsState();
                     updateControlLayout();
                     regeneratePrintContent();
-                };
-            }
-            else {
+                }
+            } else {
                 slider.oninput = () => {
                     sliderText.value = slider.value;
                     loadControlsState();
                     updateControlLayout();
                     regeneratePrintContent();
-                };
+                }
                 sliderText.oninput = () => {
                     slider.value = sliderText.value;
                     loadControlsState();
                     updateControlLayout();
                     regeneratePrintContent();
-                };
+                }
             }
         }
     }
 }
+
 // print content styles
 const printContentStyleSheet = new CSSStyleSheet();
-var printContentStyleSheetRules = {};
+var printContentStyleSheetRules: { [key: string]: string } = {};
 document.adoptedStyleSheets = [...document.adoptedStyleSheets, printContentStyleSheet];
+
+
 for (let radioChoice of document.querySelectorAll('#controls input[type="radio"]')) {
-    radioChoice.onchange = (evt) => {
+    (radioChoice as HTMLElement).onchange = (evt) => {
         loadControlsState();
         regeneratePrintContent();
         updateControlLayout();
-    };
+    }
 }
+
 for (let jsonInput of document.getElementsByClassName("json-input")) {
-    jsonInput.oninput = () => {
+    (jsonInput as HTMLElement).oninput = () => {
         loadControlsState();
         regeneratePrintContent();
-    };
+    }
 }
-var controlState = {};
+
+type LabelTree = LabelTreeList | LabelTreeHeaderList;
+type LabelTreeHeaderList = {
+    header: string;
+    children: LabelTree;
+}
+type LabelTreeList = (string | LabelTree)[];
+
+var controlState: ControlState = {} as ControlState;
+
 function loadControlsState() {
-    controlState = {};
+    controlState = {} as ControlState;
     let controls = document.getElementById("controls");
     if (controls === null) {
         throw new Error("controls element not found");
@@ -141,59 +166,57 @@ function loadControlsState() {
         }
     }
     for (let radioControlId of radioControlIds) {
-        let radioControl = controls.querySelector(`input[name="${radioControlId}"]:checked`);
+        let radioControl = controls.querySelector<HTMLInputElement>(`input[name="${radioControlId}"]:checked`);
         if (radioControl === null) {
             throw new Error(`radioControl ${radioControlId} not found`);
         }
         controlState[radioControlId] = radioControl.value;
     }
-    let gridLabelInput = controls.querySelector(".grid-input.labels-json-group .json-input");
+    let gridLabelInput = controls.querySelector<HTMLTextAreaElement>(".grid-input.labels-json-group .json-input");
     if (gridLabelInput === null) {
         throw new Error("gridLabelInput not found");
     }
     if (gridLabelInput.value === '') {
         controlState["grid-json-labels"] = [];
-    }
-    else {
+    } else {
         try {
             controlState["grid-json-labels"] = cleanGridLabelsJson(JSON.parse(gridLabelInput.value));
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e);
         }
     }
-    let treeLabelInput = controls.querySelector(".tree-input.labels-json-group .json-input");
+    let treeLabelInput = controls.querySelector<HTMLTextAreaElement>(".tree-input.labels-json-group .json-input");
     if (treeLabelInput === null) {
         throw new Error("treeLabelInput not found");
     }
     if (treeLabelInput.value === '') {
         controlState["tree-json-labels"] = [];
-    }
-    else {
+    } else {
         try {
             let rawParse = cleanTreeLabelsJson(JSON.parse(treeLabelInput.value));
             controlState["tree-json-labels"] = rawParse;
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e);
         }
     }
     // console.log(controlState)
 }
-function loadSliderControlValue(controlsElement, controlId) {
+
+function loadSliderControlValue(controlsElement: HTMLElement, controlId: SliderControlId): number {
     if (controlsElement === null) {
         throw new Error("controls element not found");
     }
     if (controlId === null) {
         throw new Error("controlId is null");
     }
-    const element = controlsElement.querySelector("#" + controlId);
+    const element = controlsElement.querySelector<HTMLInputElement>("#" + controlId);
     if (element === null) {
         throw new Error(`Control element #${controlId} not found`);
     }
     return Number(element.value);
 }
-function cleanGridLabelsJson(json) {
+
+function cleanGridLabelsJson(json: any) {
     let cleaned = [];
     if (Array.isArray(json)) {
         for (let item of json) {
@@ -204,33 +227,34 @@ function cleanGridLabelsJson(json) {
     }
     return cleaned;
 }
-function cleanTreeLabelsJson(json) {
-    let cleaned;
+
+function cleanTreeLabelsJson(json: any): LabelTree {
+    let cleaned: LabelTree
     if (Array.isArray(json)) {
-        cleaned = [];
+        cleaned = [] as LabelTreeList;
         for (let item of json) {
             if (typeof item === 'string') {
                 cleaned.push(item);
-            }
-            else {
+            } else {
                 cleaned.push(cleanTreeLabelsJson(item));
             }
         }
-    }
-    else if (typeof json === 'object') {
-        cleaned = {};
+    } else if (typeof json === 'object') {
+        cleaned = {} as LabelTreeHeaderList;
         if (json.header && typeof json.header === 'string') {
             cleaned["header"] = json.header;
         }
         if (json.children) {
             cleaned.children = cleanTreeLabelsJson(json.children);
         }
-    }
-    else {
+    } else {
         cleaned = [];
     }
     return cleaned;
 }
+
+
+
 function updateControlLayout() {
     let controls = document.getElementById("controls");
     if (controls === null) {
@@ -238,58 +262,58 @@ function updateControlLayout() {
     }
     // grid vs tree
     if (controlState["checklist-type"] == 'grid') {
-        controls.querySelectorAll(".grid-input").forEach(input => input.style.display = "block");
-        controls.querySelectorAll(".tree-input").forEach(input => input.style.display = "none");
-    }
-    else {
-        controls.querySelectorAll(".grid-input").forEach(input => input.style.display = "none");
-        controls.querySelectorAll(".tree-input").forEach(input => input.style.display = "block");
+        controls.querySelectorAll<HTMLElement>(".grid-input").forEach(input => input.style.display = "block");
+        controls.querySelectorAll<HTMLElement>(".tree-input").forEach(input => input.style.display = "none");
+    } else {
+        controls.querySelectorAll<HTMLElement>(".grid-input").forEach(input => input.style.display = "none");
+        controls.querySelectorAll<HTMLElement>(".tree-input").forEach(input => input.style.display = "block");
     }
     // grid
-    let hspacingGroup = controls.querySelector("#hspacing-group");
+    let hspacingGroup = controls.querySelector<HTMLElement>("#hspacing-group");
     if (hspacingGroup !== null) {
         if (controlState["checkbox-width"] == 'max') {
             hspacingGroup.style.display = "none";
-        }
-        else {
+        } else {
             hspacingGroup.style.display = "block";
         }
-    }
-    else {
+    } else {
         console.error("hspacing-group not found");
     }
-    let vspacingGroup = controls.querySelector("#vspacing-group");
+    let vspacingGroup = controls.querySelector<HTMLElement>("#vspacing-group");
     if (vspacingGroup !== null) {
+
         if (controlState["checkbox-height"] == 'max') {
             vspacingGroup.style.display = "none";
-        }
-        else {
+        } else {
             vspacingGroup.style.display = "block";
         }
-    }
-    else {
+    } else {
         console.error("vspacing-group not found");
     }
+
 }
 loadControlsState();
 updateControlLayout();
+
 function regeneratePrintContent() {
-    const content = document.getElementById("print-content");
+    const content: HTMLElement | null = document.getElementById("print-content");
     if (content === null) {
         throw new Error("print-content element not found");
     }
     content.innerHTML = "";
     resetPrintContentStyles();
+
     if (controlState["checklist-type"] === 'grid') { // grid checklist
         createGridContent(content);
-    }
-    else if (controlState["checklist-type"] === 'tree') {
+    } else if (controlState["checklist-type"] === 'tree') {
         createTreeContent(content);
     }
     updatePrintContentStyles();
 }
+
 regeneratePrintContent();
-function createGridContent(content) {
+
+function createGridContent(content: HTMLElement) {
     if (controlState["checkbox-height"] == 'max' && controlState["checkbox-width"] == 'max') { // max size checkbox
         let checklistTable = document.createElement('table');
         checklistTable.classList.add("checklist-table");
@@ -303,6 +327,7 @@ function createGridContent(content) {
             checklistTable.appendChild(checklistRow);
         }
         content.appendChild(checklistTable);
+
         printContentStyleSheetRules["checkbox"] = `.checkbox {
             border:2px solid black;
         }`;
@@ -315,8 +340,8 @@ function createGridContent(content) {
         .checklist-table {
             flex: 1 1 auto;
         }`;
-    }
-    else if (controlState["checkbox-width"] == 'max') { // wide rect
+
+    } else if (controlState["checkbox-width"] == 'max') { // wide rect
         let checklistSecondary = document.createElement("div");
         checklistSecondary.classList.add("checklist-secondary");
         for (let checkRow = 0; checkRow < controlState["row-count"]; checkRow++) {
@@ -332,6 +357,7 @@ function createGridContent(content) {
             checklistSecondary.appendChild(checklistPrimary);
         }
         content.appendChild(checklistSecondary);
+
         if (controlState["vspacing"] == 'max') {
             printContentStyleSheetRules["fill-print-content"] = `#print-content {
                     display: flex;
@@ -344,8 +370,7 @@ function createGridContent(content) {
                     flex-flow:column nowrap;
                     justify-content:space-between;
                 }`;
-        }
-        else {
+        } else {
             printContentStyleSheetRules["checklist-secondary"] = `.checklist-secondary {
                     display: grid;
                     grid-template: auto ${controlState["row-count"] > 1 ? `repeat(${controlState["row-count"] - 1}, auto) ` : ''}/ auto;
@@ -354,6 +379,7 @@ function createGridContent(content) {
                     row-gap:${controlState["vspacing"]}px;
                 }`;
         }
+
         printContentStyleSheetRules["checklist-primary"] = `.checklist-primary {
                 border-collapse:collapse;
             }`;
@@ -361,8 +387,8 @@ function createGridContent(content) {
                 height:${controlState["checkbox-height"]}px;
                 border:2px solid black;
             }`;
-    }
-    else if (controlState["checkbox-height"] == 'max') { // tall rect
+
+    } else if (controlState["checkbox-height"] == 'max') { // tall rect
         let labels = controlState["grid-json-labels"];
         let checklistSecondary = document.createElement("div");
         checklistSecondary.classList.add("checklist-secondary");
@@ -392,6 +418,7 @@ function createGridContent(content) {
             checklistSecondary.appendChild(checklistPrimary);
         }
         content.appendChild(checklistSecondary);
+
         printContentStyleSheetRules["fill-print-content"] = `#print-content {
                 display:flex;
             }
@@ -405,8 +432,7 @@ function createGridContent(content) {
                     grid-auto-flow: row;
                     align-items:stretch;
                 }`;
-        }
-        else {
+        } else {
             printContentStyleSheetRules["checklist-secondary"] = `.checklist-secondary {
                     display:grid;
                     grid-template:auto / auto ${controlState["col-count"] > 1 ? `repeat(${controlState["col-count"] - 1}, auto) ` : ''};
@@ -426,8 +452,8 @@ function createGridContent(content) {
                 padding-left:5px;
                 padding-right:5px;
             }`;
-    }
-    else { // fixed size rect
+
+    } else { // fixed size rect
         let labels = controlState["grid-json-labels"];
         printContentStyleSheetRules["checkbox"] = `.checkbox {
             width:${controlState["checkbox-width"]}px;
@@ -451,14 +477,14 @@ function createGridContent(content) {
             .checklist-secondary {
                 flex: ${controlState["hspacing"] == 'max' ? '1 1 auto' : '0 0 auto'};
             }`;
+
             if (controlState["hspacing"] == 'max') {
                 printContentStyleSheetRules["checklist-secondary"] = `.checklist-secondary {
                     display: flex;
                     flex-flow: row nowrap;
                     justify-content: space-between;
                 }`;
-            }
-            else {
+            } else {
                 printContentStyleSheetRules["checklist-secondary"] = `.checklist-secondary {
                     display: grid;
                     grid-template: auto / repeat(${controlState["col-count"]}, auto);
@@ -489,8 +515,7 @@ function createGridContent(content) {
                         checkBoxWrapper.appendChild(checkBoxLabel);
                         checkBoxWrapper.classList.add("checkbox-wrapper");
                         checklistPrimary.appendChild(checkBoxWrapper);
-                    }
-                    else {
+                    } else {
                         checkBoxWrapper.classList.add("checkbox");
                         checklistPrimary.appendChild(checkBoxWrapper);
                     }
@@ -498,8 +523,7 @@ function createGridContent(content) {
                 checklistSecondary.appendChild(checklistPrimary);
             }
             content.appendChild(checklistSecondary);
-        }
-        else { // labels or fixed vertical (w/ and w/o fill horizontal)
+        } else { // labels or fixed vertical (w/ and w/o fill horizontal)
             printContentStyleSheetRules["fill-print-content"] = `#print-content {
                 display: flex;
                 align-items: ${controlState["vspacing"] == 'max' ? 'stretch' : 'start'};
@@ -516,9 +540,11 @@ function createGridContent(content) {
                 row-gap:${controlState["vspacing"]}px;
                 column-gap:${controlState["hspacing"]}px;
             }`;
+
             let checklistGrid = document.createElement("div");
             checklistGrid.classList.add("checklist-grid");
             // let totalCheckBoxCount = controlState["row-count"] * controlState["col-count"];
+
             for (let checkRow = 0; checkRow < controlState["row-count"]; checkRow++) {
                 if (checkRow != 0 && controlState["vspacing"] == 'max') {
                     for (let spacerN = 0; spacerN < controlState["col-count"]; spacerN++) {
@@ -549,10 +575,13 @@ function createGridContent(content) {
         }
     }
 }
-function createTreeContent(content) {
+
+function createTreeContent(content: HTMLElement) {
     let labels = controlState["tree-json-labels"] || [];
+
     const tileContainer = document.createElement("div");
     tileContainer.classList.add("tile-container");
+
     printContentStyleSheetRules["tile-container"] = `.tile-container {
         display: grid;
         grid-template-columns: repeat(${controlState["col-count"]}, 1fr);
@@ -564,27 +593,31 @@ function createTreeContent(content) {
     printContentStyleSheetRules["nested-checkbox"] = `.tile li.nested-checkbox {
         list-style-type: none;
     }`;
+
     let domTree = recurseLabelTree(document.createElement("div"), labels);
     // add grid template columns and rows
     tileContainer.style.gridTemplateColumns = `repeat(${controlState["col-count"]}, 1fr)`;
     tileContainer.style.gridTemplateRows = `repeat(${controlState["row-count"]}, 1fr)`;
     for (let tileRow = 0; tileRow < controlState["row-count"]; tileRow++) {
         for (let tileCol = 0; tileCol < controlState["col-count"]; tileCol++) {
-            let tile = domTree.cloneNode(true);
+            let tile = domTree.cloneNode(true) as HTMLElement;
             tile.classList.add("tile");
             tileContainer.appendChild(tile);
         }
     }
     content.appendChild(tileContainer);
 }
+
 function resetPrintContentStyles() {
     printContentStyleSheetRules = {};
 }
-function recurseLabelTree(tile, tree) {
+
+function recurseLabelTree(tile: HTMLElement, tree: LabelTree): HTMLElement {
     console.log(tree); // temp debug
     return recurseLabelTreeHelper(tile, tree, 0);
 }
-function recurseLabelTreeHelper(parent, tree, depth) {
+
+function recurseLabelTreeHelper(parent: HTMLElement, tree: LabelTree, depth: number): HTMLElement {
     let domCheckboxTree = document.createElement("ul");
     if (Array.isArray(tree)) {
         // [string | LabelTree]
@@ -594,8 +627,7 @@ function recurseLabelTreeHelper(parent, tree, depth) {
                     let itemElement = document.createElement("li");
                     itemElement.textContent = item;
                     domCheckboxTree.appendChild(itemElement);
-                }
-                else if (typeof item === 'object') {
+                } else if (typeof item === 'object') {
                     let itemElement = document.createElement("li");
                     itemElement.classList.add("nested-checkbox");
                     itemElement.appendChild(recurseLabelTreeHelper(itemElement, item, depth + 1));
@@ -603,8 +635,7 @@ function recurseLabelTreeHelper(parent, tree, depth) {
                 }
             }
         }
-    }
-    else if (typeof tree === 'object') {
+    } else if (typeof tree === 'object') {
         //{ header: string, children: [] } 
         let header = tree["header"];
         if (header && typeof header === 'string') {
@@ -619,11 +650,14 @@ function recurseLabelTreeHelper(parent, tree, depth) {
     }
     return domCheckboxTree;
 }
+
 function updatePrintContentStyles() {
-    var newRules = Object.keys(printContentStyleSheetRules).map((rule) => printContentStyleSheetRules[rule]).filter((rule) => rule !== undefined).join(' ');
+    var newRules = Object.keys(printContentStyleSheetRules).map((rule) => printContentStyleSheetRules[rule]).filter((rule) => rule !== undefined).join(' ')
     newRules = newRules.replace(/\n\s*/g, ""); // basic minification
     // console.log(newRules);
     printContentStyleSheet.replaceSync(newRules);
 }
+
+
 // check if array Array.isArray(json[key])
 // check if object typeof json[key] === 'object'
