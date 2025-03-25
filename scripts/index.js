@@ -127,6 +127,7 @@ function loadControlsState() {
     if (controls === null) {
         throw new Error("controls element not found");
     }
+    // slider controls
     for (let controlId of [...numericSliderControlIds, ...maxNumericSliderControlIds]) {
         controlState[controlId] = loadSliderControlValue(controls, controlId);
     }
@@ -140,6 +141,7 @@ function loadControlsState() {
             }
         }
     }
+    // radio controls
     for (let radioControlId of radioControlIds) {
         let radioControl = controls.querySelector(`input[name="${radioControlId}"]:checked`);
         if (radioControl === null) {
@@ -147,6 +149,7 @@ function loadControlsState() {
         }
         controlState[radioControlId] = radioControl.value;
     }
+    // textarea controls
     let gridLabelInput = controls.querySelector(".grid-input.labels-json-group .json-input");
     if (gridLabelInput === null) {
         throw new Error("gridLabelInput not found");
@@ -171,8 +174,8 @@ function loadControlsState() {
     }
     else {
         try {
-            let rawParse = cleanTreeLabelsJson(JSON.parse(treeLabelInput.value));
-            controlState["tree-json-labels"] = rawParse;
+            controlState["tree-json-labels"] = cleanTreeLabelsJson(JSON.parse(treeLabelInput.value));
+            ;
         }
         catch (e) {
             console.log(e);
@@ -581,8 +584,14 @@ function resetPrintContentStyles() {
     printContentStyleSheetRules = {};
 }
 function recurseLabelTree(tile, tree) {
-    console.log(tree); // temp debug
-    return recurseLabelTreeHelper(tile, tree, 0);
+    if (Array.isArray(tree) && tree.length === 0) {
+        let domCheckboxTree = document.createElement("ul");
+        domCheckboxTree.appendChild(document.createElement("li"));
+        return domCheckboxTree;
+    }
+    else {
+        return recurseLabelTreeHelper(tile, tree, 0);
+    }
 }
 function recurseLabelTreeHelper(parent, tree, depth) {
     let domCheckboxTree = document.createElement("ul");
