@@ -162,6 +162,7 @@ function loadControlsState() {
             controlState["grid-json-labels"] = cleanGridLabelsJson(JSON.parse(gridLabelInput.value));
         }
         catch (e) {
+            controlState["grid-json-labels"] = [];
             console.log(e);
         }
     }
@@ -178,6 +179,7 @@ function loadControlsState() {
             ;
         }
         catch (e) {
+            controlState["tree-json-labels"] = [];
             console.log(e);
         }
     }
@@ -567,13 +569,14 @@ function createTreeContent(content) {
     printContentStyleSheetRules["nested-checkbox"] = `.tile li.nested-checkbox {
         list-style-type: none;
     }`;
-    let domTree = recurseLabelTree(document.createElement("div"), labels);
+    let tileTree = document.createElement("div");
+    recurseLabelTree(tileTree, labels);
     // add grid template columns and rows
     tileContainer.style.gridTemplateColumns = `repeat(${controlState["col-count"]}, 1fr)`;
     tileContainer.style.gridTemplateRows = `repeat(${controlState["row-count"]}, 1fr)`;
     for (let tileRow = 0; tileRow < controlState["row-count"]; tileRow++) {
         for (let tileCol = 0; tileCol < controlState["col-count"]; tileCol++) {
-            let tile = domTree.cloneNode(true);
+            let tile = tileTree.cloneNode(true);
             tile.classList.add("tile");
             tileContainer.appendChild(tile);
         }
@@ -583,50 +586,51 @@ function createTreeContent(content) {
 function resetPrintContentStyles() {
     printContentStyleSheetRules = {};
 }
-function recurseLabelTree(tile, tree) {
+function recurseLabelTree(parentTile, tree) {
     if (Array.isArray(tree) && tree.length === 0) {
         let domCheckboxTree = document.createElement("ul");
         domCheckboxTree.appendChild(document.createElement("li"));
-        return domCheckboxTree;
+        parentTile.appendChild(domCheckboxTree);
     }
     else {
-        return recurseLabelTreeHelper(tile, tree, 0);
+        recurseLabelTreeHelper(parentTile, tree, 1);
     }
 }
 function recurseLabelTreeHelper(parent, tree, depth) {
-    let domCheckboxTree = document.createElement("ul");
+    let checkboxListElement = document.createElement("ul");
+    if (!Array.isArray(tree) && typeof tree === 'object') {
+        //{ header: string, children: [] } 
+        let treeObject = tree;
+        let header = treeObject["header"];
+        if (header && typeof header === 'string') {
+            let headerElement = document.createElement("h" + depth);
+            headerElement.textContent = header;
+            parent.appendChild(headerElement);
+        }
+        tree = treeObject["children"];
+    }
     if (Array.isArray(tree)) {
         // [string | LabelTree]
         for (let item of tree) {
-            if (item) {
+            if (item !== undefined && item !== null) {
                 if (typeof item === 'string') {
                     let itemElement = document.createElement("li");
                     itemElement.textContent = item;
-                    domCheckboxTree.appendChild(itemElement);
+                    checkboxListElement.appendChild(itemElement);
                 }
                 else if (typeof item === 'object') {
                     let itemElement = document.createElement("li");
                     itemElement.classList.add("nested-checkbox");
-                    itemElement.appendChild(recurseLabelTreeHelper(itemElement, item, depth + 1));
-                    domCheckboxTree.appendChild(itemElement);
+                    recurseLabelTreeHelper(itemElement, item, depth + 1);
+                    checkboxListElement.appendChild(itemElement);
                 }
             }
         }
+        parent.appendChild(checkboxListElement);
     }
-    else if (typeof tree === 'object') {
-        //{ header: string, children: [] } 
-        let header = tree["header"];
-        if (header && typeof header === 'string') {
-            let headerDom = document.createElement("h" + depth);
-            headerDom.textContent = header;
-            domCheckboxTree.appendChild(headerDom);
-        }
-        let children = tree["children"];
-        if (Array.isArray(children)) {
-            recurseLabelTreeHelper(parent, children, depth);
-        }
+    else {
+        throw new Error("Invalid tree structure");
     }
-    return domCheckboxTree;
 }
 function updatePrintContentStyles() {
     var newRules = Object.keys(printContentStyleSheetRules).map((rule) => printContentStyleSheetRules[rule]).filter((rule) => rule !== undefined).join(' ');
