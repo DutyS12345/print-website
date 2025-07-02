@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base href="../" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
+    <title>Bash Cheatsheet</title>
+    <link rel="stylesheet" href="styles/cheatsheet.css">
+    <link rel="stylesheet" href="styles/bash_cheatsheet.css">
+    <!-- <link rel="stylesheet" href="styles/solid.min.css"> -->
+    <!-- <link rel="stylesheet" href="styles/fontawesome.min.css"> -->
+</head>
+
+<body>
+    <!-- <a href="" tes="">Home</a> -->
+    <h1>Bash</h1>
+    <div class="main-sections">
+        <section>
+            <h2>Program execution</h2>
+            <div class="block">
+                <span class="row inline"><span class="text keyword">#!/bin/sh</span> <span class="comment">or</span> <span class="text keyword">#!/usr/bin/sh</span></span>
+                <span class="row"></span>
+                <span class="row inline"><span class="comment"># Single line comment</span></span>
+                <span class="row inline"><span class="comment">: ' Multi-line comment<br>(:) is a null command<br>single quotes for literal characters<br>'<br></span></span>
+                <span class="row"></span>
+                <span class="row"><span class="text"><span class="command">command</span> arg1 arg2 arg3 ...</span><span class="comment"># basic command</span></span>
+                <span class="row"><span class="text"><span class="command">command</span> arg; <span class="command">command</span> arg; <span class="command">command</span></span><span class="comment"># multiple commands in one line</span></span>
+                <span class="row"><span class="text"><span class="command">command</span> arg <span class="operator">|</span> <span class="command">command</span> arg <span class="operator">|</span> <span class="command">command</span></span><span class="comment"># pipeline</span></span>
+            </div>
+            <div class="block">
+                <span class="row inline"><span class="comment"># I/O Redirection</span></span>
+                <span class="row inline"><span class="comment"># - stdin = fd 0&nbsp;&nbsp;&nbsp;stdout = fd 1&nbsp;&nbsp;&nbsp;stderr = fd 2</span></span>
+                <span class="row"><span class="text"><span class="command">python</span> hello.py <span class="operator">></span> output.txt</span><span class="comment"># redirect stdout to file</span></span>
+                <span class="row"><span class="text"><span class="command">python</span> hello.py <span class="operator">>></span> output.txt</span><span class="comment"># append stdout to file</span></span>
+                <span class="row"><span class="text"><span class="command">python</span> hello.py 2<span class="operator">></span> error.log</span><span class="comment"># redirect stderr to file</span></span>
+                <span class="row"><span class="text"><span class="command">python</span> hello.py 2<span class="operator">>&</span>1</span><span class="comment"># stderr to stdout (dup 1 to 2)</span></span>
+                <span class="row"><span class="text"><span class="command">python</span> hello.py 2<span class="operator">></span>/dev/null</span><span class="comment"># stderr to (null)</span></span>
+                <span class="row"><span class="text"><span class="command">python</span> hello.py <span class="operator">></span>output.txt 2<span class="operator">>&</span>1</span><span class="comment"># stdout and stderr to (file)</span></span>
+                <span class="row"><span class="text"><span class="command">python</span> hello.py <span class="operator">&></span>/dev/null</span><span class="comment"># stdout and stderr to (null)</span></span>
+                <span class="row"><span class="text"><span class="command">python</span> hello.py <span class="operator">&gt;&-</span></span><span class="comment"># close stdout</span></span>
+                <span class="row"><span class="text"><span class="command">python</span> hello.py <span class="operator">&lt;&-</span></span><span class="comment"># close stdin</span></span>
+                <span class="row"><span class="text"><span class="command">python</span> hello.py 3<span class="operator">&gt;&-</span> <span class="comment">or</span> 3<span class="operator">&lt;&-</span></span><span class="comment"># close fd 3</span></span>
+
+                <span class="row"><span class="text"><span class="command">echo</span> "Warning: too many users" <span class="operator">>&</span>2</span><span class="comment"># redirect stdout to stderr</span></span>
+                <span class="row"><span class="text"><span class="command">cat</span> foo.txt <span class="operator">|</span> <span class="command">grep</span> test</span><span class="comment"># pipe stdout to stdin</span></span>
+                <span class="row"><span class="text"><span class="command">find</span> . -print0 <span class="operator">|</span> <span class="command">xargs</span> -0 rm</span><span class="comment"># pipe to args</span></span>
+            </div>
+            <div class="block">
+                <span class="row inline"><span class="comment"># Process substitution</span></span>
+                <span class="row inline"><span class="comment"># - redirects stdout to a temp file at /dev/fd/&lt;n&gt;</span></span>
+                <span class="row inline"><span class="comment"># - the temp filename is substituted in its place</span></span>
+                <span class="row"><span class="text"><span class="command">cat</span> <span class="operator">&lt;(</span><span class="command">echo</span> 'hello'<span class="operator">)</span></span><span class="comment"># hello</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> 'hello' <span class="operator">&gt;</span> <span class="operator">&gt;(</span><span class="command">cat</span><span class="operator">)</span></span><span class="comment"># hello</span></span>
+                <span class="row"><span class="text"><span class="command">diff</span> <span class="operator">&lt;(</span><span class="command">ls</span> -r<span class="operator">)</span> <span class="operator">&lt;(</span><span class="command">ls</span><span class="operator">)</span></span><span class="comment"># diff between file lists</span></span>
+                <span class="row inline"><span class="note">Note: requires no spaces between &lt;(</span></span>
+            </div>
+            <div class="block">
+                <span class="row inline"><span class="comment"># Shell execution</span></span>
+                <span class="row"><span class="text"><span class="command">source</span> config.sh</span><span class="comment"># current shell execution</span></span>
+                <span class="row"><span class="text"><span class="command">.</span> config.sh</span><span class="comment"># same as source</span></span>
+                <span class="row"><span class="text"><span class="command">\.</span> config.sh</span><span class="comment"># same as source, ignoring aliases for .</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "I'm in <span class="operator">$(</span><span class="command">pwd</span><span class="operator">)</span>"</span><span class="comment"># command substitution</span></span>
+                <span class="row"><span class="text"><span class="operator">{</span><span class="command">cd</span> /tmp <span class="operator">&&</span> <span class="command">ls</span><span class="operator">}</span></span><span class="comment"># command list execution in current shell</span></span>
+                <span class="row"><span class="text"><span class="operator">(</span><span class="command">cd</span> /tmp <span class="operator">&&</span> <span class="command">ls</span><span class="operator">)</span></span><span class="comment"># command list execution as subprocess</span></span>
+                <span class="row"><span class="text"><span class="command">bash</span> -c '<span class="command">env</span> <span class="operator">|</span> <span class="command">grep</span> CLASSPATH'</span><span class="comment"># new shell execution as subprocess</span></span>
+                <span class="row"><span class="text"><span class="command">./config.sh</span></span><span class="comment"># run script in new shell as subprocess</span></span>
+                <span class="row"><span class="text"><span class="command">pwd</span></span><span class="comment"># run command as subprocess</span></span>
+                <span class="row"><span class="text"><span class="command">exec</span> <span class="command">pwd</span></span><span class="comment"># replace current shell with command</span></span>
+                <span class="row"><span class="text"><span class="command">exec</span> <span class="operator">&gt;</span> output.txt</span><span class="comment"># apply redirections to current shell</span></span>
+            </div>
+
+            <div class="block">
+                <span class="row inline"><span class="comment"># Conditional execution</span></span>
+                <span class="row"><span class="text"><span class="command">git</span> commit <span class="operator">&&</span> <span class="command">git</span> push</span><span class="comment"># shortcut AND</span></span>
+                <span class="row"><span class="text"><span class="command">git</span> commit <span class="operator">||</span> <span class="command">echo</span> "Commit failed"</span><span class="comment"># shortcut OR</span></span>
+            </div>
+
+        </section>
+        <section>
+            <!-- Program execution 2 -->
+            <h2>&nbsp;</h2>
+            <div class="block">
+                <span class="row"><span class="comment"># BG / FG / multiprocess execution</span></span>
+                <span class="row"><span class="text"><span class="command">pwd</span> <span class="keyword">&</span></span><span class="comment"># run in background</span></span>
+                <span class="row"><span class="text"><span class="command">nohup</span> <span class="command">pwd</span> <span class="keyword">&</span></span><span class="comment"># run in background will not exit on logout</span></span>
+                <span class="row"><span class="text"><span class="command">nohup</span> <span class="command">pwd</span> <span class="operator">&gt;</span> foo.out 2<span class="operator">&gt;</span> foo.err <span class="operator">&lt;</span> /dev/null <span class="keyword">&</span></span><span class="comment"># redirect stdin stdout stderr to prevent hanging</span></span>
+
+                <span class="row"><span class="text"><span class="command">nice</span> -n +19 <span class="command">sleep 10</span></span><span class="comment"># run with lowest priority (highest niceness +19)</span></span>
+                <span class="row"><span class="text"><span class="command">nice</span> -n -20 <span class="command">sleep 10</span></span><span class="comment"># run with highest priority (lowest niceness -20)</span></span>
+                <span class="row"><span class="text"><span class="command">nice</span> -n -20 <span class="command">sleep 10</span></span><span class="comment"># run with highest priority (lowest niceness -20)</span></span>
+
+                <span class="row"><span class="text"><span class="command">jobs</span></span><span class="comment"># show jobs and job IDs</span></span>
+                <span class="row"><span class="text"><span class="command">jobs -l</span></span><span class="comment"># show jobs (process groups) with PIDs</span></span>
+                <span class="row"><span class="text"><span class="command">fg</span></span><span class="comment"># move previous job to foreground</span></span>
+                <span class="row"><span class="text"><span class="command">bg</span></span><span class="comment"># move previous job to background</span></span>
+                <span class="row"><span class="text"><span class="command">fg</span> %&lt;n&gt;</span><span class="comment"># move job ID &lt;n&gt; to foreground</span></span>
+                <span class="row"><span class="text"><span class="command">bg</span> %&lt;n&gt;</span><span class="comment"># move job ID &lt;n&gt; to background</span></span>
+                <span class="row"><span class="text"><span class="command">disown %&lt;n&gt;</span></span><span class="comment"># prevent job ID %&lt;n&gt; from exit on logout</span></span>
+
+                <span class="row"><span class="text"><span class="command">wait</span> PID</span><span class="comment"># wait on PID and return exit status</span></span>
+                <span class="row"><span class="text"><span class="command">wait</span> %&lt;n&gt;</span><span class="comment"># wait on job ID &lt;n&gt; and return exit status</span></span>
+
+                <span class="row"><span class="text"><span class="command">kill</span> SIG PID</span><span class="comment"># send signal SIG to PID</span></span>
+                <span class="row"><span class="text"><span class="command">kill</span> -l</span><span class="comment"># list signal names</span></span>
+                <span class="row inline"><span class="comment"># 15 SIGTERM graceful shutdown (default)</span></span>
+                <span class="row inline"><span class="comment"># &nbsp;9 SIGKILL shutdown</span></span>
+                <span class="row inline"><span class="comment"># &nbsp;3 SIGQUIT graceful shutdown with core dump</span></span>
+                <span class="row inline"><span class="comment"># &nbsp;2 SIGINT interrupt and return control to user</span></span>
+                <span class="row inline"><span class="comment"># &nbsp;1 SIGHUP hang up aka log out</span></span>
+                <span class="row inline"><span class="comment"># 19 SIGSTOP 18 SIGCONT stop continue aka pause resume</span></span>
+            </div>
+
+            <div class="block">
+                <span class="row inline"><span class="comment"># Trap errors</span></span>
+                <span class="row"><span class="text"><span class="command">trap</span> 'echo Error at about <span class="operator">$</span><span class="keyword">LINENO</span>' <span class="keyword">ERR</span></span></span>
+                <span class="row"><span class="text"><span class="keyword">traperr()</span> <span class="operator">{</span><br>&nbsp;&nbsp;<span class="command">echo</span> "ERROR: <span class="operator">${</span><span class="keyword">BASH_SOURCE</span><span class="operator">[</span>1<span class="operator">]</span><span class="operator">}</span> at about <span class="operator">${</span><span class="keyword">BASH_LINENO</span><span class="operator">[</span>0<span class="operator">]</span><span class="operator">}</span>"<br><span class="operator">}</span><br><span class="command">set</span> -o errtrace<br><span class="command">trap</span> traperr <span class="keyword">ERR</span></span></span>
+            </div>
+
+            <div class="block">
+                <span class="row inline"><span class="comment"># Brace expansion</span></span>
+                <span class="row"><span class="text"><span class="command">ls</span> <span class="operator">{</span>A,B<span class="operator">}</span>.sh</span><span class="comment"># same as ls A.sh B.sh</span></span>
+                <span class="row"><span class="text"><span class="command">ls</span> A/<span class="operator">{</span>B,C/<span class="operator">{</span>1<span class="operator">..</span>3<span class="operator">}</span><span class="operator">}</span>.sh</span><span class="comment"># A/B.sh A/C/1.sh A/C/2.sh A/C/3.sh</span></span>
+            </div>
+            <div class="block">
+                <span class="row inline"><span class="comment"># Filename expansion (aka globbing)</span></span>
+                <span class="row"><span class="text"><span class="command">ls</span></span><span class="comment"># .a.sh a.sh b.sh c.sh cc.sh</span></span>
+                <span class="row"><span class="text"><span class="command">ls</span> *.sh</span><span class="comment"># a.sh b.sh c.sh cc.sh </span></span>
+                <span class="row"><span class="text"><span class="command">ls</span> a*</span><span class="comment"># a.sh </span></span>
+                <span class="row"><span class="text"><span class="command">ls</span> [c]*.sh</span><span class="comment"># c.sh cc.sh </span></span>
+                <span class="row"><span class="text"><span class="command">ls</span> c?.sh</span><span class="comment"># cc.sh </span></span>
+                <span class="row"><span class="text"><span class="command">ls</span> [^a].sh</span><span class="comment"># a.sh </span></span>
+                <span class="row inline"><span class="note">Note: Strings containing wildcards will not match filenames that start with a dot (.)</span></span>
+                <span class="row"><span class="comment"># Glob options</span></span>
+                <span class="row"><span class="text"><span class="command">shopt</span> -s nullglob</span><span class="comment"># Non-matching globs are removed ('*.foo' => '')</span></span>
+                <span class="row"><span class="text"><span class="command">shopt</span> -s failglob</span><span class="comment"># Non-matching globs throw errors</span></span>
+                <span class="row"><span class="text"><span class="command">shopt</span> -s nocaseglob</span><span class="comment"># Case insensitive globs</span></span>
+                <span class="row"><span class="text"><span class="command">shopt</span> -s dotglob</span><span class="comment"># Wildcards match dotfiles ("*.sh" => ".foo.sh")</span></span>
+                <span class="row"><span class="text"><span class="command">shopt</span> -s globstar</span><span class="comment"># Allow ** for recursive matches ('lib/**/*.rb' => 'lib/a/b/c.rb')</span></span>
+                <span class="row inline"><span class="note">Note: Set GLOBIGNORE as a colon-separated list of patterns to be removed from glob matches.</span></span>
+            </div>
+        </section>
+        <section>
+            <h2>Variables</h2>
+            <div class=" block">
+                <span class="row"><span class="text">text="*.txt"</span><span class="comment"># </span></span>
+                <span class="row"><span class="text"><span class="command">cat</span> <span class="operator">$</span>text</span><span class="comment"># all .txt file contents</span></span>
+                <span class="row"><span class="text"><span class="command">cat</span> "<span class="operator">$</span>text"</span><span class="comment"># *.sh</span></span>
+                <span class="row"><span class="text"><span class="command">cat</span> '$text\n'</span><span class="comment"># $text\n</span></span>
+                <span class="row"><span class="text"><span class="command">cat</span> $'$text\n'</span><span class="comment"># $text&lt;newline&gt;</span></span>
+                <span class="row"><span class="text"><span class="command">unset</span> text</span></span>
+                <span class="row inline"><span class="note">Note: generally double-quote variables unless they<br>contain wildcards to expand or command fragments</span></span>
+            </div>
+            <div class="block">
+                <span class="row inline"><span class="comment"># Default values</span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">:-</span>val<span class="operator">}</span></span><span class="comment"># $foo, or val if unset (or null)</span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">:=</span>val<span class="operator">}</span></span><span class="comment"># set $foo to val if unset (or null)</span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">:+</span>val<span class="operator">}</span></span><span class="comment"># val if $foo is set (and not null)</span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">:?</span>message<span class="operator">}</span></span><span class="comment"># show error message and exit if $foo is unset (or null)</span></span>
+                <span class="row inline"><span class="note">Note: (:) includes null tests</span></span>
+            </div>
+
+            <div class="block">
+                <span class="row inline"><span class="comment">Arguments</span></span>
+                <span class="row"><span class="text"><span class="keyword">$#</span></span><span class="comment"># Number of arguments</span></span>
+                <span class="row"><span class="text"><span class="keyword">$*</span></span><span class="comment"># All positional arguments (as a single word)</span></span>
+                <span class="row"><span class="text"><span class="keyword">$@</span></span><span class="comment"># All positional arguments (as separate strings)</span></span>
+                <span class="row"><span class="text"><span class="keyword">$1</span></span><span class="comment"># First argument</span></span>
+                <span class="row"><span class="text"><span class="keyword">$_</span></span><span class="comment"># Last argument of the previous command</span></span>
+                <span class="row inline"><span class="note">Note: $@ and $* must be quoted in order to perform as described.<br>Otherwise, they do exactly the same thing (arguments as separate strings).</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment">Special variables</span></span>
+                <span class="row"><span class="text"><span class="keyword">$?</span></span><span class="comment"># Exit status of last task</span></span>
+                <span class="row"><span class="text"><span class="keyword">$!</span></span><span class="comment"># PID of last background task</span></span>
+                <span class="row"><span class="text"><span class="keyword">$$</span></span><span class="comment"># PID of shell</span></span>
+                <span class="row"><span class="text"><span class="keyword">$0</span></span><span class="comment"># Filename of the shell script</span></span>
+                <span class="row inline"><span class="note">Note: $0 is not a positional argument.</span></span>
+                <span class="row"><span class="text"><span class="operator">${</span><span class="keyword">PIPESTATUS</span><span class="operator">[</span>n<span class="operator">]</span><span class="operator">}</span></span><span class="comment"># Exit status command n in a pipeline (array)</span></span>
+                <span class="row inline"><span class="comment"># Copy the array first before inspection because<br># the first access will write new values into the array</span></span>
+                <span class="row"><span class="text">RC=<span class="operator">(</span> "<span class="operator">${</span><span class="keyword">PIPESTATUS</span><span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>" <span class="operator">)</span></span></span>
+            </div>
+
+            <div class="block">
+                <span class="row inline"><span class="comment"># Indirection</span></span>
+                <span class="row"><span class="text">name=joe</span></span>
+                <span class="row"><span class="text">pointer=name</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> <span class="operator">${</span><span class="operator">!</span>pointer<span class="operator">}</span></span><span class="comment"># joe</span></span>
+            </div>
+            <div class="block">
+                <span class="row inline"><span class="comment"># Prefix name expansion</span></span>
+                <span class="row"><span class="text">prefix_a=one</span></span>
+                <span class="row"><span class="text">prefix_b=two</span></span>
+                <span class="row inline"><span class="comment"># all variables names starting with prefix_</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> <span class="operator">${</span><span class="operator">!</span>prefix_*<span class="operator">}</span></span><span class="comment"># prefix_a prefix_b</span></span>
+                </span>
+            </div>
+        </section>
+        <section>
+            <!-- Variables 2 -->
+            <h2>&nbsp;</h2>
+            <div class="block">
+                <span class="row inline"><span class="comment"># Substitution</span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">%</span>suffix<span class="operator">}</span></span><span class="comment"># Remove suffix </span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">#</span>prefix<span class="operator">}</span></span><span class="comment"># Remove prefix </span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">%%</span>suffix<span class="operator">}</span></span><span class="comment"># Remove long suffix </span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">/%</span>suffix<span class="operator">}</span></span><span class="comment"># Remove long suffix </span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">##</span>prefix<span class="operator">}</span></span><span class="comment"># Remove long prefix </span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">/#</span>prefix<span class="operator">}</span></span><span class="comment"># Remove long prefix </span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">/</span>from<span class="operator">/</span>to<span class="operator">}</span></span><span class="comment"># Replace first match </span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">//</span>from<span class="operator">/</span>to<span class="operator">}</span></span><span class="comment"># Replace all </span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">/%</span>from<span class="operator">/</span>to<span class="operator">}</span></span><span class="comment"># Replace suffix </span></span>
+                <span class="row"><span class="text"><span class="operator">${</span>foo<span class="operator">/#</span>from<span class="operator">/</span>to<span class="operator">}</span></span><span class="comment"># Replace prefix </span></span>
+            </div>
+            <div class="block">
+                <span class="row inline"><span class="comment"># String Manipulation</span></span>
+                <span class="row"><span class="text">foo='foobar'</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span><span class="operator">#</span>foo<span class="operator">}</span>"</span><span class="comment"># 6 Length of $foo</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>foo<span class="operator">:</span>1<span class="operator">:</span>3<span class="operator">}</span>"</span><span class="comment"># oob Substring (position, length)</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>foo<span class="operator">:</span>1<span class="operator">}</span>"</span><span class="comment"># oobar Substring to the end</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>foo<span class="operator">:</span>(-3)<span class="operator">:</span>3<span class="operator">}</span>"</span><span class="comment"># bar Substring from the end</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>foo<span class="operator">::</span>-1<span class="operator">}</span>"</span><span class="comment"># fooba Substring until length-1</span></span>
+                <span class="row"></span>
+                <span class="row"><span class="text">str="HELLO WORLD!"</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>str<span class="operator">,</span><span class="operator">}</span>"</span><span class="comment"># "hELLO WORLD!" (lowercase 1st letter)</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>str<span class="operator">,,</span><span class="operator">}</span>"</span><span class="comment"># "hello world!" (all lowercase)</span></span>
+                <span class="row"></span>
+                <span class="row"><span class="text">str="hello world!"</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>str<span class="operator">^</span><span class="operator">}</span>"</span><span class="comment"># "Hello world!" (uppercase 1st letter)</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>str<span class="operator">^^</span><span class="operator">}</span>"</span><span class="comment"># "HELLO WORLD!" (all uppercase)</span></span>
+            </div>
+            <div class="block">
+                <span class="row inline"><span class="comment"># Numeric calculations</span></span>
+                <span class="row"><span class="text"><span class="operator">$((</span>a + 200<span class="operator">))</span></span><span class="comment"># POSIX integer arithmetic, returns string</span></span>
+                <span class="row"><span class="text"><span class="operator">$((</span><span class="operator">$</span><span class="keyword">RANDOM</span><span class="operator">%</span>200<span class="operator">))</span></span><span class="comment"># Random number 0..199</span></span>
+                <span class="row"></span>
+                <span class="row"><span class="text"><span class="command">declare</span> -i count</span><span class="comment"># Declare as type integer</span></span>
+                <span class="row"><span class="text">count<span class="operator">+=</span>1</span><span class="comment"># Increment</span></span>
+            </div>
+        </section>
+        <section>
+            <h2>Control Flow</h2>
+            <div class="block">
+                <span class="row inline"><span class="comment"># if / elif / else statement</span></span>
+                <span class="row"><span class="text"><span class="keyword">if</span> <span class="operator">[[</span> <span class="keyword">-z</span> "<span class="operator">$</span>string" <span class="operator">]]</span>; <span class="keyword">then</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> 'empty'</span></span>
+                <span class="row"><span class="text"><span class="keyword">elif</span> <span class="operator">[[</span> <span class="keyword">-n</span> "<span class="operator">$</span>string" <span class="operator">]]</span>; <span class="keyword">then</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> 'not empty'</span></span>
+                <span class="row"><span class="text"><span class="keyword">else</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span></span></span>
+                <span class="row"><span class="text"><span class="keyword">fi</span></span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="text"><span class="operator">[</span> <span class="keyword">-z</span> <span class="operator">$</span>string <span class="operator">]</span></span><span class="comment"># POSIX test</span></span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="keyword">-z</span> <span class="operator">$</span>string <span class="operator">]]</span></span><span class="comment"># bash test w/ extended features </span></span>
+                <span class="row"><span class="text"><span class="operator">((</span>3 <span class="operator">-</span> 3<span class="operator">))</span></span><span class="comment"># bash arithmetic test w/ extended feature<br>&nbsp; returns zero when non-zero</span></span>
+                <span class="row inline"><span class="note">Note: [ and ] and [[ and ]] require whitespace around them</span></span>
+            </div>
+            <div class="block">
+                <span class="row inline"><span class="comment"># Case / switch statement</span></span>
+                <span class="row"><span class="text"><span class="keyword">case</span> "$1" <span class="keyword">in</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="operator">(</span>start <span class="operator">|</span> up<span class="operator">)</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;vagrant up <span class="operator">;;</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="operator">(</span>*<span class="operator">)</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;<span class="command">echo</span> "Usage: $0 {start|stop|ssh}"</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">;;</span></span></span>
+                <span class="row"><span class="text"><span class="keyword">esac</span></span></span></span>
+                <span class="row inline"><span class="note">Note: opening parentheses are optional and commonly omitted</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Loops</span></span>
+
+                <span class="row"><span class="comment"># Basic for loop</span></span>
+                <span class="row"><span class="text"><span class="keyword">for</span> i <span class="keyword">in</span> /etc/rc.*; <span class="keyword">do</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "<span class="operator">$</span>i"</span></span>
+                <span class="row"><span class="text"><span class="keyword">done</span></span></span>
+
+                <span class="row"><span class="comment"># C-like for loop</span></span>
+                <span class="row"><span class="text"><span class="keyword">for</span> <span class="operator">((</span>i = 0 ; i &lt; 100 ; i++<span class="operator">))</span>; <span class="keyword">do</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "<span class="operator">$</span>i"</span></span>
+                <span class="row"><span class="text"><span class="keyword">done</span></span></span>
+
+                <span class="row"><span class="comment"># Range for loop</span></span>
+                <span class="row"><span class="text"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="operator">{</span>1<span class="operator">..</span>5<span class="operator">}</span>; <span class="keyword">do</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "<span class="operator">$</span>i"</span></span>
+                <span class="row"><span class="text"><span class="keyword">done</span></span></span>
+
+                <span class="row"><span class="comment"># Range for loop with step size</span></span>
+                <span class="row"><span class="text"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="operator">{</span>5<span class="operator">..</span>50<span class="operator">..</span>5<span class="operator">}</span>; <span class="keyword">do</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "<span class="operator">$</span>i"</span></span></span>
+                <span class="row"><span class="text"><span class="keyword">done</span></span></span>
+
+                <span class="row"><span class="comment"># Infinite loop</span></span>
+                <span class="row"><span class="text"><span class="keyword">while</span> <span class="keyword">true</span>; <span class="keyword">do</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;...</span></span>
+                <span class="row"><span class="text"><span class="keyword">done</span></span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Functions</span></span>
+                <span class="row"><span class="text"><span class="keyword">hello</span><span class="operator">()</span> <span class="operator">{</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "hello <span class="operator">$</span>1"</span></span>
+                <span class="row"><span class="text"><span class="operator">}</span></span></span>
+                <span class="row"><span class="text"><span class="keyword">function</span> <span class="keyword">hello</span> <span class="operator">{</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "hello <span class="operator">$</span>1"</span></span>
+                <span class="row"><span class="text"><span class="operator">}</span></span></span>
+                <span class="row"><span class="text"><span class="command">hello</span> "world"</span><span class="comment"># hello world</span></span>
+            </div>
+        </section>
+
+        <section>
+            <h2>Conditions</h2>
+            <div class="block">
+                <span class="row inline"><span class="comment"># Test conditions</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">-z</span> STRING <span class="operator">]]</span></span><span class="comment"># Empty string</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">-n</span> STRING <span class="operator">]]</span></span><span class="comment"># Not empty string</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> STRING <span class="operator">==</span> STRING <span class="operator">]]</span></span><span class="comment"># Equal</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> STRING <span class="operator">!=</span> STRING <span class="operator">]]</span></span><span class="comment"># Not Equal</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> NUM <span class="operator">-eq</span> NUM <span class="operator">]]</span></span><span class="comment"># Equal</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> NUM <span class="operator">-ne</span> NUM <span class="operator">]]</span></span><span class="comment"># Not equal</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> NUM <span class="operator">-lt</span> NUM <span class="operator">]]</span></span><span class="comment"># Less than</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> NUM <span class="operator">-le</span> NUM <span class="operator">]]</span></span><span class="comment"># Less than or equal</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> NUM <span class="operator">-gt</span> NUM <span class="operator">]]</span></span><span class="comment"># Greater than</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> NUM <span class="operator">-ge</span> NUM <span class="operator">]]</span></span><span class="comment"># Greater than or equal</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> STRING <span class="operator">=~</span> STRING <span class="operator">]]</span></span><span class="comment"># Regexp</span></span>
+                <span class="row"><span class="text"><span class="operator">((</span> NUM <span class="operator">&lt;</span> NUM <span class="operator">))</span></span><span class="comment"># Numeric conditions</span></span>
+                <span class="row"><span class="comment"># More conditions</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">-o</span> OPTIONNAME <span class="operator">]]</span></span><span class="comment"># OPTIONNAME enabled</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">!</span> EXPR <span class="operator">]]</span></span><span class="comment"># Not</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> X <span class="operator">&&</span> Y <span class="operator">]]</span></span><span class="comment"># And</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> X <span class="operator">||</span> Y <span class="operator">]]</span></span><span class="comment"># Or</span></span>
+                <span class="row"><span class="comment"># File conditions</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">-e</span> FILE <span class="operator">]]</span></span><span class="comment"># Exists</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">-r</span> FILE <span class="operator">]]</span></span><span class="comment"># Readable</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">-h</span> FILE <span class="operator">]]</span></span><span class="comment"># Symlink</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">-d</span> FILE <span class="operator">]]</span></span><span class="comment"># Directory</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">-w</span> FILE <span class="operator">]]</span></span><span class="comment"># Writable</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">-s</span> FILE <span class="operator">]]</span></span><span class="comment"># Size is > 0 bytes</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">-f</span> FILE <span class="operator">]]</span></span><span class="comment"># File</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> <span class="operator">-x</span> FILE <span class="operator">]]</span></span><span class="comment"># Executable</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> FILE1 <span class="operator">-nt</span> FILE2 <span class="operator">]]</span></span><span class="comment"># 1 is more recent than 2</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> FILE1 <span class="operator">-ot</span> FILE2 <span class="operator">]]</span></span><span class="comment"># 2 is more recent than 1</span></span>
+                <span class="row"><span class="text"><span class="operator">[[</span> FILE1 <span class="operator">-ef</span> FILE2 <span class="operator">]]</span></span><span class="comment"># Same files</span></span>
+                <span class="row inline"><span class="note">Note: [[ is a command/program that returns<br>either 0 (true) or 1 (false). Any program that obeys<br>the same logic can be used as a condition.</span></span>
+            </div>
+            <!-- </section> -->
+            <!-- <section> -->
+            <h2>Functions</h2>
+            <div class="block">
+                <span class="row"><span class="comment"># Returning values</span></span>
+                <span class="row"><span class="text"><span class="keyword">myfunc</span><span class="operator">()</span> <span class="operator">{</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="keyword">local</span> myresult='some value'</span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "<span class="operator">$</span>myresult"</span></span>
+                <span class="row"><span class="text"><span class="operator">}</span></span></span>
+                <span class="row"><span class="text">result=<span class="operator">$(</span><span class="command">myfunc</span><span class="operator">)</span></span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Raising errors</span></span>
+                <span class="row"><span class="text"><span class="keyword">myfunc</span><span class="operator">()</span> <span class="operator">{</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="keyword">return</span> 1</span></span>
+                <span class="row"><span class="text"><span class="operator">}</span></span></span>
+                <span class="row"><span class="text"><span class="keyword">if</span> <span class="command">myfunc</span>; <span class="keyword">then</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "success"</span></span>
+                <span class="row"><span class="text"><span class="keyword">else</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "failure"</span></span>
+                <span class="row"><span class="text"><span class="keyword">fi</span></span></span>
+            </div>
+        </section>
+
+        <section>
+            <h2>Reading input</h2>
+            <div class="block">
+                <span class="row"><span class="comment"># Reading input</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> -n "Proceed? [y/n]: "</span></span>
+                <span class="row"><span class="text"><span class="command">read</span> -r ans </span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "$ans"</span></span>
+                <span class="row inline"><span class="note">Note: read's -r option disables a<br>peculiar legacy behavior with backslashes.</span></span>
+                <span class="row"></span>
+                <span class="row"><span class="text"><span class="command">read</span> -n 1 ans # Read one character</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Read lines loop</span></span>
+                <span class="row"><span class="text"><span class="keyword">while</span> <span class="command">read</span> -r line; <span class="keyword">do</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "<span class="operator">$</span>line"</span></span>
+                <span class="row"><span class="text"><span class="keyword">done</span> &lt; file.txt</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Parsing options</span></span>
+                <span class="row"><span class="text"><span class="keyword">while</span> <span class="operator">[[</span> "<span class="operator">$</span>1" =~ ^- <span class="operator">&&</span> ! "<span class="operator">$</span>1" <span class="operator">==</span> "--" <span class="operator">]]</span>; <span class="keyword">do</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">case</span> $1 <span class="command">in</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;-V <span class="operator">|</span> --version <span class="operator">)</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="command">echo</span> "<span class="operator">$</span>version"</span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="command">exit</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">;;</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;-s <span class="operator">|</span> --string <span class="operator">)</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="command">shift</span>; string=<span class="operator">$</span>1</span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">;;</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;-f <span class="operator">|</span> --flag <span class="operator">)</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flag=1</span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">;;</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="keyword">esac</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">shift</span></span></span>
+                <span class="row"><span class="text"><span class="keyword">done</span></span></span>
+                <span class="row"><span class="text"><span class="keyword">if</span> <span class="operator">[[</span> "<span class="operator">$</span>1" <span class="operator">==</span> '--' <span class="operator">]]</span>; <span class="keyword">then</span> <span class="command">shift</span>; <span class="keyword">fi</span></span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Here-doc</span></span>
+                <span class="row"><span class="text"><span class="command">cat</span> <span class="operator">&lt;&lt;</span> <span class="keyword">END</span><br>hello world<br><span class="keyword">END</span></span><span class="comment"># hello world</span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Here-string</span></span>
+                <span class="row"><span class="text"><span class="command">cat</span> <span class="operator">&lt;&lt;&lt;</span> abc.txt</span><span class="comment"># abc.txt</span></span>
+            </div>
+        </section>
+        <section>
+            <h2>Arrays</h2>
+            <div class="block">
+                <span class="row"><span class="comment"># Array definition</span></span>
+                <span class="row"><span class="text">Fruits=<span class="operator">(</span>'Apple' 'Banana' 'Orange' <span class="operator">)</span></span></span>
+                <span class="row"><span class="text">Fruits<span class="operator">[</span>0<span class="operator">]</span>="Apple"</span></span>
+                <span class="row"><span class="text">Fruits<span class="operator">[</span>1<span class="operator">]</span>="Banana"</span></span>
+                <span class="row"><span class="text">Fruits<span class="operator">[</span>2<span class="operator">]</span>="Orange"</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Array access</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>Fruits<span class="operator">[</span>0<span class="operator">]</span><span class="operator">}</span>"</span><span class="comment"># Element #0</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>Fruits<span class="operator">[</span>-1<span class="operator">]</span><span class="operator">}</span>"</span><span class="comment"># Last element</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>Fruits<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>"</span><span class="comment"># All elements, space-separated</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>#Fruits<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>"</span><span class="comment"># Number of elements</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>#Fruits<span class="operator">}</span>"</span><span class="comment"># String length of the 1st element</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>#Fruits<span class="operator">[</span>3<span class="operator">]</span><span class="operator">}</span>"</span><span class="comment"># String length of the Nth element</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>Fruits<span class="operator">[</span>@<span class="operator">]</span><span class="operator">:</span>3<span class="operator">:</span>2<span class="operator">}</span>"</span><span class="comment"># Range (from position 3, length 2)</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>!Fruits<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>"</span><span class="comment"># Keys of all elements, space-separated</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Array operations</span></span>
+                <span class="row"><span class="text">Fruits=<span class="operator">(</span>"<span class="operator">${</span>Fruits<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>" "Watermelon" <span class="operator">)</span></span><span class="comment"># Push</span></span>
+                <span class="row"><span class="text">Fruits+=<span class="operator">(</span>'Watermelon'<span class="operator">)</span></span><span class="comment"># Also Push</span></span>
+                <span class="row"><span class="text">Fruits=<span class="operator">(</span> "<span class="operator">${</span>Fruits<span class="operator">[</span>@<span class="operator">]</span><span class="operator">/</span>Ap*<span class="operator">/</span><span class="operator">}</span>" <span class="operator">)</span></span><span class="comment"># Remove by regex match</span></span>
+                <span class="row"><span class="text"><span class="command">unset</span> Fruits<span class="operator">[</span>2<span class="operator">]</span></span><span class="comment"># Remove one item</span></span>
+                <span class="row"><span class="text">Fruits=<span class="operator">(</span>"<span class="operator">${</span>Fruits<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>"<span class="operator">)</span></span><span class="comment"># Duplicate</span></span>
+                <span class="row"><span class="text">Fruits=<span class="operator">(</span>"<span class="operator">${</span>Fruits<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>" "<span class="operator">${</span>Veggies<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>" <span class="operator">)</span></span><span class="comment"># Concatenate</span></span>
+                <span class="row"><span class="text">lines=<span class="operator">(</span><span class="operator">$(</span><span class="command">cat</span> "logfile"<span class="operator">)</span><span class="operator">)</span></span><span class="comment"># Read from file</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Array iteration</span></span>
+                <span class="row"><span class="text"><span class="keyword">for</span> i <span class="keyword">in</span> "<span class="operator">${</span>arrayName<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>"; <span class="keyword">do</span><br>&nbsp;&nbsp;<span class="command">echo</span> "<span class="operator">$</span>i"<br><span class="keyword">done</span></span></span>
+            </div>
+            <!-- </section> -->
+            <!-- <section> -->
+            <h2>Dictionaries / Associative Arrays</h2>
+            <div class="block">
+                <span class="row"><span class="comment"># Dictionary definition</span></span>
+                <span class="row"><span class="text"><span class="command">declare</span> -A sounds</span><span class="comment"># declares as associative array</span></span>
+                <span class="row"><span class="text">sounds<span class="operator">[</span>dog<span class="operator">]</span>="bark"</span></span>
+                <span class="row"><span class="text">sounds<span class="operator">[</span>cow<span class="operator">]</span>="moo"</span></span>
+                <span class="row"><span class="text">sounds<span class="operator">[</span>bird<span class="operator">]</span>="tweet"</span></span>
+                <span class="row"><span class="text">sounds<span class="operator">[</span>wolf<span class="operator">]</span>="howl"</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Dictionary access</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>sounds<span class="operator">[</span>dog<span class="operator">]</span><span class="operator">}</span>"</span><span class="comment"># Dog's sound</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span>sounds<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>"</span><span class="comment"># All values</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span><span class="operator">!</span>sounds<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>"</span><span class="comment"># All keys</span></span>
+                <span class="row"><span class="text"><span class="command">echo</span> "<span class="operator">${</span><span class="operator">#</span>sounds<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>"</span><span class="comment"># Number of elements</span></span>
+                <span class="row"><span class="text"><span class="command">unset</span> sounds<span class="operator">[</span>dog<span class="operator">]</span></span><span class="comment"># Delete dog</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Iterate over values</span></span>
+                <span class="row"><span class="text"><span class="keyword">for</span> val <span class="keyword">in</span> "<span class="operator">${</span>sounds<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>" ; <span class="keyword">do</span><br>&nbsp;&nbsp;<span class="command">echo</span> "<span class="operator">$</span>val"<br><span class="keyword">done</span></span></span>
+                <span class="row"><span class="comment"># Iterate over keys</span></span>
+                <span class="row"><span class="text"><span class="keyword">for</span> key <span class="keyword">in</span> "<span class="operator">${</span><span class="operator">!</span>sounds<span class="operator">[</span>@<span class="operator">]</span><span class="operator">}</span>" ; <span class="keyword">do</span><br>&nbsp;&nbsp;<span class="command">echo</span> "<span class="operator">$</span>key"<br><span class="keyword">done</span></span></span>
+            </div>
+        </section>
+
+        <section>
+            <h2>History</h2>
+            <div class="block">
+                <span class="row"><span class="comment"># History</span></span>
+                <span class="row"><span class="text"><span class="command">history</span></span><span class="comment"># Show history</span></span>
+                <span class="row"><span class="text"><span class="command">shopt</span> -s histverify</span><span class="comment"># Don’t execute expanded result immediately</span></span>
+                <span class="row"></span>
+
+                <span class="row"><span class="text"><span class="keyword">!!</span></span><span class="comment"># Execute last command again</span></span>
+                <span class="row"><span class="text"><span class="keyword">!</span>n</span><span class="comment"># Expand nth command in history</span></span>
+                <span class="row"><span class="text"><span class="keyword">!-</span>n</span><span class="comment"># Expand nth most recent command</span></span>
+                <span class="row"><span class="text"><span class="keyword">!</span><span class="operator">&lt;</span>command<span class="operator">&gt;</span></span><span class="comment"># Expand most recent invocation of command</span></span>
+                <span class="row"><span class="text"><span class="keyword">!!</span><span class="operator">:</span><span class="keyword">s</span><span class="operator">/</span>&lt;FROM&gt;<span class="operator">/</span>&lt;TO&gt;<span class="operator">/</span></span><span class="comment"># Replace first occurrence of &lt;FROM&gt; to &lt;TO&gt; in most recent command</span></span>
+                <span class="row"><span class="text"><span class="keyword">!!</span><span class="operator">:</span><span class="keyword">gs</span><span class="operator">/</span>&lt;FROM&gt;<span class="operator">/</span>&lt;TO&gt;<span class="operator">/</span></span><span class="comment"># Replace all occurrences of &lt;FROM&gt; to &lt;TO&gt; in most recent command</span></span>
+                <span class="row"><span class="text"><span class="keyword">!$</span><span class="operator">:</span><span class="keyword">t</span></span><span class="comment"># Expand only basename from last parameter of most recent command</span></span>
+                <span class="row"><span class="text"><span class="keyword">!$</span><span class="operator">:</span><span class="keyword">h</span></span><span class="comment"># Expand only directory from last parameter of most recent command</span></span>
+                <span class="row inline"><span class="note">!! and !$ can be replaced with any valid expansion.</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># History slices</span></span>
+                <span class="row"><span class="text"><span class="keyword">!!</span><span class="operator">:</span>n</span><span class="comment"># Expand only nth token from most recent command (command is 0; first argument is 1)</span></span>
+                <span class="row"><span class="text"><span class="keyword">!^</span></span><span class="comment"># Expand first argument from most recent command, short for !!:^</span></span>
+                <span class="row"><span class="text"><span class="keyword">!$</span></span><span class="comment"># Expand last token from most recent command, short for !!:$</span></span>
+                <span class="row"><span class="text"><span class="keyword">!*</span></span><span class="comment"># Expand all parameters of most recent command</span></span>
+                <span class="row"><span class="text"><span class="keyword">!!</span><span class="operator">:</span>n-m</span><span class="comment"># Expand range of tokens from most recent command</span></span>
+                <span class="row"><span class="text"><span class="keyword">!!</span><span class="operator">:</span>n-$</span><span class="comment"># Expand nth token to last from most recent command</span></span>
+                <span class="row inline"><span class="note">!! can be replaced with any valid expansion i.e. !cat, !-2, !42, etc.</span></span>
+            </div>
+        </section>
+        <section>
+            <h2>Miscellaneous</h2>
+            <div class="block">
+                <span class="row inline"><span class="comment"># Transform strings</span></span>
+                <span class="row"><span class="text">-c</span><span class="comment"># Operations apply to characters not in the given set</span></span>
+                <span class="row"><span class="text">-d</span><span class="comment"># Delete characters</span></span>
+                <span class="row"><span class="text">-s</span><span class="comment"># Replaces repeated characters with single occurrence</span></span>
+                <span class="row"><span class="text">-t</span><span class="comment"># Truncates</span></span>
+                <span class="row"><span class="text">[:upper:]</span><span class="comment"># All upper case letters</span></span>
+                <span class="row"><span class="text">[:lower:]</span><span class="comment"># All lower case letters</span></span>
+                <span class="row"><span class="text">[:digit:]</span><span class="comment"># All digits</span></span>
+                <span class="row"><span class="text">[:space:]</span><span class="comment"># All whitespace</span></span>
+                <span class="row"><span class="text">[:alpha:]</span><span class="comment"># All letters</span></span>
+                <span class="row"><span class="text">[:alnum:]</span><span class="comment"># All letters and digits</span></span>
+                <span class="row inline"><span class="comment"># Example</span></span>
+                <span class="row inline"><span class="text"><span class="command">echo</span> "Hello World" <span class="operator">|</span> <span class="command">tr</span> '[:lower:]' '[:upper:]'</span></span>
+                <span class="row inline"><span class="text">HELLO WORLD</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Strict mode</span></span>
+                <span class="row"><span class="text"><span class="command">set</span> -euo pipefail</span></span>
+                <span class="row"><span class="text"><span class="keyword">IFS</span>=$'\n\t'</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment"># Options</span></span>
+                <span class="row"><span class="text"><span class="command">set</span> -o noclobber</span><span class="comment"># Avoid overlay files (echo "hi" > foo)</span></span>
+                <span class="row"><span class="text"><span class="command">set</span> -o errexit</span><span class="comment"># Used to exit upon error, avoiding cascading errors</span></span>
+                <span class="row"><span class="text"><span class="command">set</span> -o pipefail</span><span class="comment"># Unveils hidden failures</span></span>
+                <span class="row"><span class="text"><span class="command">set</span> -o nounset</span><span class="comment"># Exposes unset variables</span></span>
+            </div>
+            <div class=" block">
+                <span class="row"><span class="text"><span class="command">printf</span> 'IFS is: %q' "<span class="operator">$</span><span class="keyword">IFS</span>"</span><span class="comment"># print IFS</span></span>
+                <span class="row"><span class="text"><span class="command">source</span> "<span class="operator">${</span>0<span class="operator">%</span>/*<span class="operator">}</span>/../share/foo.sh"</span><span class="comment"># source relative</span></span>
+                <span class="row"><span class="text">dir=<span class="operator">${</span>0<span class="operator">%</span>/*<span class="operator">}</span></span><span class="comment"># command location</span></span>
+                <span class="row"><span class="text"><span class="command">find</span> . -iname text.txt</span><span class="comment"># find file location</span></span>
+                <span class="row"><span class="text"><span class="command">locate</span> text.txt</span><span class="comment"># find file location</span></span>
+                <span class="row"><span class="text"><span class="command">realpath</span> $1</span><span class="comment"># absolute path</span></span>
+                <span class="row"><span class="text"><span class="command">basepath</span> $1</span><span class="comment"># file name</span></span>
+                <span class="row"><span class="text"><span class="command">basepath</span> $1 .sh</span><span class="comment"># file name without suffix</span></span>
+            </div>
+        </section>
+        <section>
+            <!-- Miscellaneous -->
+            <h2>&nbsp;</h2>
+            <div class="block">
+                <span class="row inline"><span class="comment"># Inspect commands</span></span>
+                <span class="row"><span class="text"><span class="command">which</span> cd</span><span class="comment"># find command location</span></span>
+                <span class="row"><span class="text"><span class="command">type</span> cd</span><span class="comment"># cd is a function/alias/shell builtin/...</span></span>
+                <span class="row"><span class="text"><span class="command">command</span> -V cd</span><span class="comment"># cd is a function/alias/shell builtin/...</span></span>
+                <span class="row"><span class="text"><span class="command">man</span> cd</span><span class="comment"># manual/man pages for cd</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment">Go to previous directory</span></span>
+                <span class="row"><span class="text"><span class="command">pwd</span></span><span class="comment"># /home/user/foo</span></span>
+                <span class="row"><span class="text"><span class="command">cd</span> bar/</span></span>
+                <span class="row"><span class="text"><span class="command">pwd</span></span><span class="comment"># /home/user/foo/bar</span></span>
+                <span class="row"><span class="text"><span class="command">cd</span> - pwd # /home/user/foo</span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment">Check for command’s result </span></span>
+                <span class="row"><span class="text"><span class="keyword">if</span> <span class="command">ping</span> -c 1 google.com; <span class="keyword">then</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "It appears you have a working internet connection"</span></span>
+                <span class="row"><span class="text"><span class="keyword">fi</span></span></span>
+            </div>
+            <div class="block">
+                <span class="row"><span class="comment">Grep check</span></span>
+                <span class="row"><span class="text"><span class="keyword">if</span> <span class="command">grep</span> -q 'foo' ~/.bash_history; <span class="keyword">then</span></span></span>
+                <span class="row"><span class="text">&nbsp;&nbsp;<span class="command">echo</span> "You appear to have typed 'foo' in the past"</span></span>
+                <span class="row"><span class="text"><span class="keyword">fi</span></span>
+            </div>
+            <div class="block">
+                <span class="row inline"><span class="comment"># printf</span></span>
+                <span class="row"><span class="text"><span class="command">printf</span> " 1 + 1=%d" 2</span><span class="comment"># "1 + 1 = 2"</span></span>
+                <span class="row"><span class="text"><span class="command">printf</span> "This is how you print a float: %f" 2</span><span class="comment"># "This is how you print a float: 2.000000"</span></span>
+                <span class="row"><span class="text"><span class="command">printf</span> '%s\n' '#!/bin/bash' 'echo hello' <span class="operator">&lt;</span> file</span></span>
+                <span class="row inline"><span class="comment"># format string is applied to each group of arguments</span></span>
+                <span class="row"><span class="text"><span class="command">printf</span> '%i+%i=%i\n' 1 2 3 4 5 9</span></span>
+            </div>
+        </section>
+    </div>
+</body>
+
+</html>

@@ -1,123 +1,22 @@
-<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Pages</title>
-    <link rel="stylesheet" href="styles/index.css">
-    <link rel="stylesheet" href="styles/tabber.css">
-    <link rel="stylesheet" href="styles/solid.min.css">
-    <link rel="stylesheet" href="styles/fontawesome.min.css">
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self';" />
-  </head>
-  <body>
-    <button title="Info" id="info-toggle" class="nav-toggle nav-toggle--active"><i
-        class="fa-solid fa-info"></i></button>
-    <button title="Controls" id="control-toggle" class="nav-toggle nav-toggle--active"><i
-        class="fa-solid fa-sliders"></i></button>
-    <div id="info" class="info--active tabber">
-      <div class="tabber__nav">
-        <span class="tabber__nav__label">TODO:</span>
-        <button class="tabber__nav__button tab--active" data-tab-name="grid">Grid</button>
-        <button class="tabber__nav__button" data-tab-name="tree">Tree</button>
-      </div>
-      <div class="tabber__content">
-        <div class="tabber__tab tab--active" data-tab-name="grid">
-          <p>
-            checkbox line style, checkbox fill y/n, checkbox fill color style.            
-          </p>
-          <p>
-            Possible icons:
-          <ul>
-            <li> mattress-pillow icon </li>
-            <li> grip icon family </li>
-            <li> circle arrow icon family </li>
-            <li> circle chevron icon family </li>
-            <li> chevron icon family </li>
-            <li> caret icon family </li>
-            <li> bars-staggered icon </li>
-            <li> arrow icon family </li>
-            <li> angles icon family </li>
-          </ul>
-          </p>
-        </div>
-        <div class="tabber__tab" data-tab-name="tree">
-          <p>
-            A page where you can print a check list of checkboxes in a tree.<br>
-            <br>
-            A way to enter a json with a nested list of lists. The top level can optionally be a list of titled lists
-            which will become headered sections.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div id="controls" class="controls--active">
-      <div id="checklist-type-group">
-        <div class="checklist-type-label">Checklist Type</div>
-        <div>
-          <input type="radio" name="checklist-type" value="grid" id="checklist-type-grid" checked="true">
-          <label for="checklist-type-grid">Grid</label>
-        </div>
-        <div>
-          <input type="radio" name="checklist-type" value="tree" id="checklist-type-tree">
-          <label for="checklist-type-tree">Tree</label>
-        </div>
-      </div>
-      <div id="checkbox-width-group" class="slider-group">
-        <label for="checkbox-width">Checkbox Width</label>
-        <input type="text" id="checkbox-width-text" title="Checkbox width">
-        <input type="range" min="1" max="101" value="5" id="checkbox-width" class="slider" title="Checkbox width">
-      </div>
-      <div id="checkbox-height-group" class="slider-group">
-        <label for="checkbox-height">Checkbox Height</label>
-        <input type="text" id="checkbox-height-text" title="Checkbox height">
-        <input type="range" min="1" max="101" value="5" id="checkbox-height" class="slider" title="Checkbox height">
-      </div>
-      <div id="col-count-group" class="slider-group">
-        <label for="col-count"># Columns</label>
-        <input type="text" id="col-count-text" title="Number of columns">
-        <input type="range" min="1" max="100" value="5" id="col-count" class="slider" title="Number of columns">
-      </div>
-      <div id="row-count-group" class="slider-group">
-        <label for="row-count"># Rows</label>
-        <input type="text" id="row-count-text" title="Number of rows">
-        <input type="range" min="1" max="100" value="5" id="row-count" class="slider" title="Number of rows">
-      </div>
-      <div id="hspacing-group" class="slider-group">
-        <label for="hspacing">Horizontal Spacing</label>
-        <input type="text" id="hspacing-text" title="Horizontal spacing"><br>
-        <input type="range" min="1" max="51" value="5" id="hspacing" class="slider" title="Horizontal spacing">
-      </div>
-      <div id="vspacing-group" class="slider-group">
-        <label for="vspacing">Vertical Spacing</label>
-        <input type="text" id="vspacing-text" title="Vertical spacing">
-        <input type="range" min="1" max="51" value="5" id="vspacing" class="slider" title="Vertical spacing">
-      </div>
 
-      <div id="direction-group">
-        Label Direction
-        <div>
-          <input type="radio" name="direction" value="lr" id="direction-lr" checked="true">
-          <label for="direction-lr">Left to Right</label>
-        </div>
-        <div>
-          <input type="radio" name="direction" value="td" id="direction-td">
-          <label for="direction-td">Top to Bottom</label>
-        </div>
-      </div>
-      <div class="grid-input labels-json-group">
-        <label for="grid-labels-json">Grid Checklist Labels</label>
-        <textarea type="text" id="grid-labels-json" class="json-input"></textarea>
-      </div>
-      <div class="tree-input labels-json-group">
-        <label for="tree-labels-json">Tree Checklist Labels</label>
-        <textarea type="text" id="tree-labels-json" class="json-input"></textarea>
-      </div>
-    </div>
-    <div id="print-content" class="print"></div>
-    <script src="scripts/index.js"></script>
-    <script src="scripts/tabber.js"></script>
-  </body>
+<head>
+  <base href="pages/" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
+  <title>Printable Pages</title>
+  <link rel="stylesheet" href="styles/cheatsheet.css">
+  <!-- <link rel="stylesheet" href="styles/solid.min.css"> -->
+  <!-- <link rel="stylesheet" href="styles/fontawesome.min.css"> -->
+</head>
+
+<body>
+  <ul>
+    <li><a href="checklist">Checklist</a></li>
+    <li><a href="bash_cheatsheet">Bash Cheatsheet</a></li>
+    <!-- <li><a href="vim_cheatsheet.html">Vim Cheat Sheet</a></li> -->
+  </ul>
+</body>
+
 </html>
