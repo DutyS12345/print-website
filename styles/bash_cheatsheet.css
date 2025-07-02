@@ -1,0 +1,28 @@
+:root {
+    --comment-color: #808080;
+    --command-color: #00aa99;
+    --operator-color: #0099ee;
+    --keyword-color-1: #7700ee;
+    --note-color: #0055bb;
+}
+
+.comment {
+    color: var(--comment-color);
+}
+
+.command {
+    color: var(--command-color);
+}
+
+.operator {
+    color: var(--operator-color);
+}
+
+.keyword {
+    color: var(--keyword-color-1);
+}
+
+.note {
+    color: var(--note-color);
+    font-family: var(--font-sans-serif);
+}

@@ -15,7 +15,7 @@ td.checkbox {
 }
 
 @media print {
-    body>*:not(.print) {
+    body > *:not(.print) {
         display: none;
     }
 }
